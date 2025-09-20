@@ -24,16 +24,8 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
-
       const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        credentials: 'include'
       });
 
       if (response.ok) {
@@ -41,7 +33,6 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user);
         setIsAuthenticated(true);
       } else {
-        // Token is invalid, remove it
         localStorage.removeItem('token');
         setUser(null);
         setIsAuthenticated(false);
@@ -158,13 +149,8 @@ export const AuthProvider = ({ children }) => {
 
   const refreshUser = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
       const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        credentials: 'include'
       });
 
       if (response.ok) {

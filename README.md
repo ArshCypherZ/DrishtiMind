@@ -1,6 +1,7 @@
 # DrishtiMind
 
 **DrishtiMind** - A confidential mental wellness toolkit designed to help Indian youth gain new perspectives on daily stress. Our AI-powered platform provides structured, private exercises to build emotional resilience and communication skills.
+<img width="1687" height="916" alt="image" src="https://github.com/user-attachments/assets/c331d90b-09c3-468c-9871-c12ad7d64e25" />
 
 ---
 

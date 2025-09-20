@@ -1,0 +1,31 @@
+{
+  "name": "Drishti - Mental Wellness App",
+  "short_name": "Drishti",
+  "description": "A mental wellness app that helps you find new perspectives on your challenges",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f093fb",
+  "theme_color": "#f093fb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png", 
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["health", "wellness", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1170x2532",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+}

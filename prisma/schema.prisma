@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
+}
+
+model User {
+  id                   String               @id @default(cuid())
+  clerkId              String               @unique
+  email                String               @unique
+  username             String               @unique
+  first_name           String
+  last_name            String
+  avatar_url           String?
+  is_verified          Boolean              @default(false)
+  created_at           DateTime             @default(now())
+  updated_at           DateTime             @updatedAt
+  total_points         Int                  @default(0)
+  current_streak       Int                  @default(0)
+  longest_streak       Int                  @default(0)
+  push_notification    Boolean              @default(true)
+  dark_mode            Boolean              @default(false)
+  wellness_reminders   Boolean              @default(true)
+  weekly_summary       Boolean              @default(true)
+  sessions             Int                  @default(0)
+  journals             Journal[]
+  moods                Mood[]
+  notifications        Notification[]
+  perspective_sessions PerspectiveSession[]
+  conversations     Conversation[]
+  
+  @@map("users")
+}
+
+model Mood {
+  id         String   @id @default(cuid())
+  user_id    String
+  date       DateTime
+  day        Int
+  week       Int
+  month      Int
+  mood_rate  Int
+  mood_emoji String?
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("moods")
+}
+
+model PerspectiveSession {
+  id               String             @id @default(cuid())
+  user_id          String
+  date             DateTime           @default(now())
+  day              Int
+  week             Int
+  month            Int
+  user_input       String
+  created_at       DateTime           @default(now())
+  status           String             @default("input")
+  completed_at     DateTime?
+  saved_to_journal Boolean            @default(false)
+  cards            PerspectiveCard[]
+  quizzes          PerspectiveQuizz[]
+  user             User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  conversations    Conversation[]
+  
+  @@map("perspective_sessions")
+}
+
+model PerspectiveQuizz {
+  id            String             @id @default(cuid())
+  session_id    String
+  question_type String
+  question_text String
+  answer_type   String
+  answer_text   String?
+  text_option   String?
+  emojis_option Json?
+  scale_min     Int?               @default(1)
+  scale_max     Int?               @default(5)
+  mcq_options   Json?
+  session       PerspectiveSession @relation(fields: [session_id], references: [id], onDelete: Cascade)
+
+  @@map("perspective_quizzes")
+}
+
+model PerspectiveCard {
+  id         String             @id @default(cuid())
+  session_id String
+  title      String
+  content    String
+  card_type  String
+  session    PerspectiveSession @relation(fields: [session_id], references: [id], onDelete: Cascade)
+
+  @@map("perspective_cards")
+}
+
+model Journal {
+  id            String   @id @default(cuid())
+  user_id       String
+  date          DateTime @default(now())
+  mood_emoji    String
+  title         String
+  content       String
+  summary       String
+  points_earned Int      @default(0)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  tags          Json?
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("journals")
+}
+
+model Notification {
+  id            String    @id @default(cuid())
+  user_id       String
+  title         String
+  message       String
+  type          String
+  is_read       Boolean   @default(false)
+  scheduled_for DateTime?
+  sent_at       DateTime?
+  created_at    DateTime  @default(now())
+  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  user_id   String
+  session_id String
+  message   String
+  response  String?
+  created_at DateTime @default(now())
+  
+  user      User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  session   PerspectiveSession @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  
+  @@map("conversations")
+}

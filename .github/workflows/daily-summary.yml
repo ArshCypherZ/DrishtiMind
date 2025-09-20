@@ -1,0 +1,38 @@
+name: Daily Summary Generation
+
+on:
+  schedule:
+    - cron: '59 23 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate-daily-summaries:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Generate Daily Summaries
+        run: |
+          APP_URL="${APP_URL}"
+          CRON_SECRET="${CRON_SECRET}"
+          
+          echo "Generating daily summaries for all users..."
+          
+          response=$(curl -s -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            "$APP_URL/api/daily-summary/generate-batch")
+          
+          echo "Response: $response"
+          
+          if echo "$response" | grep -q '"success":true'; then
+            echo "Daily summaries generated successfully"
+            exit 0
+          else
+            echo "Failed to generate daily summaries"
+            echo "Response: $response"
+            exit 1
+          fi
+        
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}

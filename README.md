@@ -36,10 +36,12 @@ Drishti is a web app designed to help you gain new perspectives on life's challe
 
 2. **Set Up Environment**
    - Copy `.env.example` to `.env.local` and fill in:
-     - `DATABASE_URL`
+     - `DATABASE_URL=postgres`
      - `JWT_SECRET`
      - `GEMINI_API_KEY`
-     - `NEXT_PUBLIC_APP_URL`
+     - `NEXT_PUBLIC_APP_URL=yournextappurl`
+     - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=dashboard.clerk.com`
+     - `CLERK_SECRET_KEY=dashboard.clerk.com`
 
 3. **Database**
    - Use local PostgreSQL or a cloud provider (Neon, Supabase, Railway, Vercel Postgres)

@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useClerk, useAuth as useClerkAuth } from '@clerk/nextjs';
 
 const AuthContext = createContext();
 
@@ -16,16 +17,22 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { signOut } = useClerk();
+  const { isSignedIn, isLoaded } = useClerkAuth();
 
-  // Check if user is authenticated on app start
+  // Run auth check when Clerk is loaded
   useEffect(() => {
+    if (!isLoaded) return; // wait until Clerk bootstraps
+    
+    setIsLoading(true);
     checkAuthStatus();
-  }, []);
+  }, [isLoaded]);
 
   const checkAuthStatus = async () => {
     try {
       const response = await fetch('/api/auth/me', {
-        credentials: 'include'
+        credentials: 'include',
+        cache: 'no-store'
       });
 
       if (response.ok) {
@@ -123,20 +130,10 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Optional: Call logout API to invalidate token on server
-      const token = localStorage.getItem('token');
-      if (token) {
-        await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      }
+      await signOut();
     } catch (error) {
-      console.error('Logout API call failed:', error);
+      console.error('Clerk signOut failed:', error);
     } finally {
-      // Always clear local state regardless of API call success
       localStorage.removeItem('token');
       setUser(null);
       setIsAuthenticated(false);
@@ -150,7 +147,8 @@ export const AuthProvider = ({ children }) => {
   const refreshUser = async () => {
     try {
       const response = await fetch('/api/auth/me', {
-        credentials: 'include'
+        credentials: 'include',
+        cache: 'no-store'
       });
 
       if (response.ok) {

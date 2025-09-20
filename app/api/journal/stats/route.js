@@ -1,64 +1,11 @@
 import { NextResponse } from 'next/server';
-import { auth, currentUser } from '@clerk/nextjs/server';
 import { prisma } from '../../../../lib/prisma';
+import { getAuthenticatedUser } from '../../../../lib/authUtils';
 
 export async function GET(request) {
   try {
-    const authStatus = request.headers.get('x-clerk-auth-status');
-    const authToken = request.headers.get('x-clerk-auth-token');
-    
-    if (authStatus !== 'signed-in') {
-      console.log('User not signed in according to Clerk headers');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
-    // Try currentUser() first as it's more reliable
-    let clerkUser;
-    let userId;
-    
-    try {
-      clerkUser = await currentUser();
-
-      if (clerkUser) {
-        userId = clerkUser.id;
-      }
-    } catch (error) {
-      console.log('Error getting currentUser():', error.message);
-    }
-    
-    if (!userId) {
-      try {
-        const authResult = auth();
-        userId = authResult?.userId;
-      } catch (error) {
-        console.log('Error with auth():', error.message);
-      }
-    }
-    
-    if (!userId && authToken) {
-      try {
-        const tokenPayload = JSON.parse(atob(authToken.split('.')[1]));
-        userId = tokenPayload.sub;
-      } catch (error) {
-        console.log('Error parsing JWT token:', error.message);
-      }
-    }
-
-    if (!userId) {
-      console.log('No userId found after all attempts');
-      return NextResponse.json({ error: 'Unauthorized - No user ID found' }, { status: 401 });
-    }
-
-    const localUser = await prisma.user.findUnique({
-      where: { clerkId: userId },
-    });
-
-    if (!localUser) {
-      console.log('User not found in local database with clerkId:', userId);
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    const user = localUser;
+    const { user, error } = await getAuthenticatedUser(request);
+    if (error) return error;
 
     // Get current date info
     const now = new Date();

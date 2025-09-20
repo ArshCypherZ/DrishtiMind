@@ -1,87 +1,34 @@
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
+import { clerkClient } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { syncUser } from '../../../../lib/clerkSync';
 
-export async function GET(request) {
+export const dynamic = 'force-dynamic';
+
+export async function GET() {
   try {
-    const authStatus = request.headers.get('x-clerk-auth-status');
-    const authToken = request.headers.get('x-clerk-auth-token');
-    const sessionToken = request.headers.get('x-clerk-session-token');
+    const { userId } = await auth();
     
-    if (authStatus !== 'signed-in') {
-      console.log('User not signed in according to Clerk headers');
+    if (!userId) {
+      console.log('No userId found, returning 401');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
-    let clerkUser;
-    let userId;
-    
-    try {
-      clerkUser = await currentUser();
 
-      if (clerkUser) {
-        userId = clerkUser.id;
-      }
-    } catch (error) {
-      console.log('Error getting currentUser():', error.message);
-    }
-    
-    if (!userId) {
-      try {
-        const authResult = auth();
-        userId = authResult?.userId;
-      } catch (error) {
-        console.log('Error with auth():', error.message);
-      }
-    }
-    
-    if (!userId && authToken) {
-      try {
-        // Clerk JWT tokens have the userId in the 'sub' field
-        const tokenPayload = JSON.parse(atob(authToken.split('.')[1]));
-        userId = tokenPayload.sub;
-      } catch (error) {
-        console.log('Error parsing JWT token:', error.message);
-      }
-    }
-    
-    if (!userId && sessionToken) {
-      try {
-        const sessionPayload = JSON.parse(atob(sessionToken.split('.')[1]));
-        userId = sessionPayload.sub || sessionPayload.userId || sessionPayload.user_id;
-      } catch (error) {
-        console.log('Error parsing session token:', error.message);
-      }
-    }
-    
-    if (!userId) {
-      console.log('No userId found after all attempts');
-      return NextResponse.json({ error: 'Unauthorized - No user ID found' }, { status: 401 });
-    }
-    
-    if (!clerkUser && userId) {
-      try {
-        clerkUser = await currentUser();
-      } catch (error) {
-        console.log('Retry error getting currentUser():', error.message);
-      }
-    }
+    const client = typeof clerkClient === 'function' ? await clerkClient() : clerkClient;
+    const clerkUser = await client.users.getUser(userId);
+
     
     if (!clerkUser) {
-      console.log('No clerkUser available - creating minimal user object');
-      // Create a minimal user object if we have userId but no clerkUser
-      clerkUser = {
-        id: userId,
-        emailAddresses: [{ emailAddress: 'unknown@example.com' }],
-        firstName: 'Unknown',
-        lastName: 'User',
-        imageUrl: null
-      };
+      console.log('No clerk user found, returning 401');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const localUser = await syncUser(clerkUser);
-
-    // Return user with all necessary fields for profile
+    
+    if (!localUser) {
+      console.log('No local user found, returning 401');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     return NextResponse.json({
       success: true,
       user: {
@@ -104,10 +51,8 @@ export async function GET(request) {
         updated_at: localUser.updated_at
       }
     });
-    
   } catch (error) {
     console.error('Auth check error:', error);
-    console.error('Error stack:', error.stack);
-    return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

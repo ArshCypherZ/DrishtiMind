@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // PUT /api/notifications/[id] - Update a notification (mark as read, etc.)
 export async function PUT(request, { params }) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -62,7 +62,7 @@ export async function PUT(request, { params }) {
   // DELETE /api/notifications/[id] - Delete a notification
   export async function DELETE(request, { params }) {
     try {
-      const { userId } = auth();
+      const { userId } = await auth();
       if (!userId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }

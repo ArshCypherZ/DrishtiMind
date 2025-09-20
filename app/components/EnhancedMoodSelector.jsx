@@ -36,9 +36,9 @@ const EnhancedMoodSelector = ({
     try {
       const response = await fetch('/api/mood', {
         method: 'POST',
+        credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           mood_emoji: selectedMood,

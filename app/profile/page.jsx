@@ -27,9 +27,9 @@ const ProfileScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [userStats, setUserStats] = useState({
-    completedSessions: 0,
-    currentStreak: 0,
-    totalPoints: 0
+    total_sessions: 0,
+    current_streak: 0,
+    total_points: 0
   });
   
   // User preferences states (synced with user data)
@@ -408,19 +408,19 @@ const ProfileScreen = () => {
                   <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-100">
                     <div className="text-center">
                       <div className="text-3xl font-bold text-gray-900">
-                        {userStats.completedSessions}
+                        {userStats.total_sessions}
                       </div>
                       <div className="text-sm text-gray-500">Sessions</div>
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-gray-900">
-                        {userStats.currentStreak}
+                        {userStats.current_streak}
                       </div>
                       <div className="text-sm text-gray-500">Day Streak</div>
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-gray-900">
-                        {userStats.totalPoints}
+                        {userStats.total_points}
                       </div>
                       <div className="text-sm text-gray-500">Points</div>
                     </div>
@@ -643,19 +643,19 @@ const ProfileScreen = () => {
                   <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-gray-900">
-                        {userStats.completedSessions}
+                        {userStats.total_sessions}
                       </div>
                       <div className="text-xs text-gray-500">Sessions</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-gray-900">
-                        {userStats.currentStreak}
+                        {userStats.current_streak}
                       </div>
                       <div className="text-xs text-gray-500">Day Streak</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-gray-900">
-                        {userStats.totalPoints}
+                        {userStats.total_points}
                       </div>
                       <div className="text-xs text-gray-500">Points</div>
                     </div>

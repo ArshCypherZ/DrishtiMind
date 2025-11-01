@@ -86,6 +86,15 @@ export async function POST(request) {
       return journal;
     });
 
+    // Generate notifications based on milestones (journal milestones since it creates a journal)
+    try {
+      const notificationService = (await import('../../../../lib/notificationService')).default;
+      await notificationService.checkJournalMilestones(user.id);
+      await notificationService.checkStreakMilestones(user.id);
+    } catch (notificationError) {
+      console.error('Error generating notifications:', notificationError);
+    }
+
     return NextResponse.json({
       success: true,
       journalId: result.id,

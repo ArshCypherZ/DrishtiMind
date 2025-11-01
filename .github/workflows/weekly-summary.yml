@@ -1,0 +1,51 @@
+name: Weekly Summary Generation
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run every Sunday at 00:00 UTC
+  workflow_dispatch:
+
+jobs:
+  generate-weekly-summaries:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Generate Weekly Summaries
+        run: |
+          APP_URL="${APP_URL:-https://example.com}"
+          CRON_SECRET="${CRON_SECRET:-your-cron-secret}"
+          
+          echo "Generating weekly summaries for all users..."
+          
+          response=$(curl -s -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            "$APP_URL/api/weekly-summary/generate-batch")
+          
+          echo "Response: $response"
+          
+          if echo "$response" | grep -q '"success":true'; then
+            echo "Weekly summaries generated successfully"
+            
+            # Extract and display stats
+            processed=$(echo "$response" | grep -o '"processed":[0-9]*' | cut -d':' -f2)
+            created=$(echo "$response" | grep -o '"created":[0-9]*' | cut -d':' -f2)
+            errors=$(echo "$response" | grep -o '"errors":[0-9]*' | cut -d':' -f2)
+            weekly_notifications=$(echo "$response" | grep -o '"weeklySummaryNotifications":[0-9]*' | cut -d':' -f2)
+            
+            echo "Weekly Summary Stats:"
+            echo "Users processed: $processed"
+            echo "Weekly summaries created: $created"
+            echo "Weekly summary notifications sent: $weekly_notifications"
+            echo "Errors encountered: $errors"
+
+            exit 0
+          else
+            echo "Failed to generate weekly summaries"
+            echo "Response: $response"
+            exit 1
+          fi
+        
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}

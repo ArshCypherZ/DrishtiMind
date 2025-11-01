@@ -20,6 +20,7 @@ import {
 import ProtectedRoute from '../components/ProtectedRoute';
 import JournalDetailModal from '../components/JournalDetailModal';
 import { useAuth } from '../context/AuthContext';
+import QuickMessages from '../components/QuickMessages';
 
 const JournalScreen = () => {
   const { isAuthenticated } = useAuth();
@@ -49,6 +50,15 @@ const JournalScreen = () => {
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.4 }
   };
+
+  const quickJournalMessages = [
+    "I'm grateful for",
+    "Today I learned",
+    "I'm proud of",
+    "I'm struggling with",
+    "I want to remember",
+    "I'm feeling"
+  ];
 
   const moodEmojis = {
     '😊': { emoji: '😊', color: 'text-green-500', bg: 'bg-green-50', label: 'Happy' },
@@ -975,7 +985,12 @@ const JournalScreen = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                       maxLength="5000"
                     />
-                    <div className="mt-1 text-xs text-gray-400">
+                    <QuickMessages 
+                      messages={quickJournalMessages}
+                      onSelect={(msg) => setNewEntryContent(prev => prev ? `${prev} ${msg}` : msg)}
+                      className="mt-3"
+                    />
+                    <div className="mt-2 text-xs text-gray-400">
                       {newEntryContent.length}/5000 characters
                     </div>
                   </div>

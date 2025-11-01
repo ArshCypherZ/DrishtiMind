@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, Edit3, Bell, Settings, BookOpen } from 'lucide-react';
+import { Home, Edit3, Bell, Settings, BookOpen, BarChart3 } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 
 const navigationItems = [
@@ -8,6 +8,7 @@ const navigationItems = [
   { icon: BookOpen, key: 'journal', label: 'Journal' },
   { icon: Edit3, key: 'perspective', label: 'Perspective' },
   { icon: Bell, key: 'notifications', label: 'Notifications' },
+  { icon: BarChart3, key: 'dashboard', label: 'Dashboard' },
   { icon: Settings, key: 'profile', label: 'Profile' }
 ];
 

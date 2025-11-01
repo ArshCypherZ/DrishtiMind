@@ -207,7 +207,7 @@ const MoodTrendChart = ({ data = [], isLoading = false }) => {
           
           // Fallback to basic trend analysis
           if (trend > 1) return '📈 Your mood has been improving this week!';
-          if (trend < -1) return '�� Consider some self-care activities';
+          if (trend < -1) return ':) Consider some self-care activities';
           return '📊 Your mood has been relatively stable';
         })()}
       </div>

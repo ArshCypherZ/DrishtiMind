@@ -141,9 +141,8 @@ export async function POST(request) {
       ]
     }`;
 
-    console.log('Generating quiz with structured streaming...');
     const stream = await genAI.models.generateContentStream({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       contents: prompt,
       config: {
         tools: [{
@@ -161,12 +160,10 @@ export async function POST(request) {
     let fullText = '';
     
     for await (const chunk of stream) {
-      // Collect raw text for debugging
       if (chunk.text) {
         fullText += chunk.text;
       }
-      
-      // Collect structured data
+    
       if (chunk.functionCalls && chunk.functionCalls.length > 0) {
         const data = chunk.functionCalls[0].args;
         if (data.questions) {
@@ -174,8 +171,6 @@ export async function POST(request) {
         }
       }
     }
-    
-    console.log('Received quiz stream');
     
     if (generatedQuiz.questions.length === 0) {
       console.log('No structured data received, parsing raw text');
@@ -192,8 +187,6 @@ export async function POST(request) {
         return NextResponse.json({ error: 'Failed to generate quiz questions' }, { status: 500 });
       }
     }
-    
-    console.log('Generated quiz:', JSON.stringify(generatedQuiz, null, 2));
 
     // Save questions to database
     const savedQuestions = [];

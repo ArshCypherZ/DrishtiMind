@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot } from 'lucide-react';
+import QuickMessages from './QuickMessages';
 
 const PerspectiveChatbot = ({ sessionId, cards, userInput }) => {
   const [messages, setMessages] = useState([]);
@@ -10,7 +11,15 @@ const PerspectiveChatbot = ({ sessionId, cards, userInput }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const messagesEndRef = useRef(null);
+  const [showQuickMessages, setShowQuickMessages] = useState(true);
 
+  const quickChatMessages = [
+    "Can you explain more?",
+    "How do I apply this?",
+    "What if it doesn't work?",
+    "Tell me more",
+    "Give me an example"
+  ];
   
   const storageKey = sessionId ? `perspective-chat:${sessionId}` : null;
 
@@ -49,6 +58,9 @@ const PerspectiveChatbot = ({ sessionId, cards, userInput }) => {
 
   useEffect(() => {
     scrollToBottom();
+    if (messages.length > 0) {
+      setShowQuickMessages(false);
+    }
   }, [messages]);
 
   const handleSendMessage = async () => {
@@ -174,7 +186,13 @@ const PerspectiveChatbot = ({ sessionId, cards, userInput }) => {
       </div>
 
       {/* Input */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gray-200 p-4 space-y-3">
+        {showQuickMessages && messages.length === 0 && (
+          <QuickMessages 
+            messages={quickChatMessages}
+            onSelect={(msg) => setInputMessage(msg)}
+          />
+        )}
         <div className="flex space-x-2">
           <input
             value={inputMessage}

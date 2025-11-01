@@ -142,9 +142,10 @@ export async function POST(request) {
       }
     });
 
-    // Generate notifications based on milestones
+    // Generate notifications based on journal milestones
     try {
-      await notificationService.checkMilestones(user.id);
+      await notificationService.checkJournalMilestones(user.id);
+      await notificationService.checkStreakMilestones(user.id);
     } catch (notificationError) {
       console.error('Error generating notifications:', notificationError);
     }

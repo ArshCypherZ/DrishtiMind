@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Generate Daily Summaries
         run: |
-          APP_URL="${APP_URL}"
-          CRON_SECRET="${CRON_SECRET}"
+          APP_URL="${APP_URL:-https://example.com}"
+          CRON_SECRET="${CRON_SECRET:-your-cron-secret}"
           
           echo "Generating daily summaries for all users..."
           

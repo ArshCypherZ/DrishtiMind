@@ -1,35 +1,19 @@
 # DrishtiMind
 
-**DrishtiMind** - A confidential mental wellness toolkit designed to help Indian youth gain new perspectives on daily stress. Our AI-powered platform provides structured, private exercises to build emotional resilience and communication skills.
+A private mental wellness toolkit for Indian youth to reframe daily stress. Built with AI to help develop emotional resilience and communication skills through structured exercises.
 <img width="1687" height="916" alt="image" src="https://github.com/user-attachments/assets/c331d90b-09c3-468c-9871-c12ad7d64e25" />
-
----
 
 ## Features
 
-### In Scope
-- **AI-Powered Perspective Sessions**: Engage with our 'Thought Analyzer' to identify cognitive patterns and receive a fresh, unbiased perspective on stressful situations.
-- **Daily Mood Tracking & Analytics**: Log your mood daily to visualize trends and understand your emotional well-being over time.
-- **Confidential Journaling**: A secure and private space for your thoughts, enhanced with AI-powered summaries to help you reflect without sharing your data.
-- **AI Communication Planner**: Practice and plan for difficult conversations in a safe, guided environment to build confidence.
-- **Personalized Reminders**: Smart, gentle notifications to encourage consistency in your wellness journey.
-- **Responsive Design**: Fully optimized for mobile devices and desktops, allowing you to access support anytime, anywhere.
+- **Perspective Sessions**: Analyze thought patterns and get alternative viewpoints on stressful situations through interactive questions and perspective cards
+- **AI Chatbot**: Explore insights and apply perspective cards to real situations
+- **Voice Practice Rooms**: Rehearse difficult conversations with AI voice interactions powered by Gemini Multimodal Live.
+- **Mood Tracking**: Daily mood logging with trend visualization and analytics
+- **Private Journaling**: Secure space with AI summaries, mood detection, and auto-tagging
+- **Dashboard**: Wellness score, mood trends, activity metrics, and journal insights in one view
+- **Email Checkups**: Daily, weekly, and monthly wellness reports via automated workflows
 
-### Out of Scope
-- **Crisis Support & Therapy**: DrishtiMind is a self-help toolkit, not a replacement for professional therapy or a crisis intervention service.
-- **Medical Advice**: The platform does not provide medical or clinical diagnoses.
-
-### Future Opportunities
-- **Deeper Integrations**: Envisioned to seamlessly connect with calendar and health apps to find correlations between daily activities and mood.
-- **Guided Meditations**: Potential to generate personalized, guided meditation scripts based on the user's current mood and journal entries.
-
----
-
-## Challenges We Faced
-
-- **Ensuring AI Safety**: Crafting highly constrained and reliable prompts to prevent the AI from giving harmful or unsolicited advice was our top priority.
-- **Maintaining User Privacy**: Architecting the system to ensure all sensitive user data, like journal entries, could be handled with absolute confidentiality.
-- **User Engagement Loop**: Designing a compelling and gentle user journey that encourages consistent, daily check-ins without causing pressure.
+This is a self-help tool, not a replacement for therapy or medical advice.
 
 ---
 
@@ -50,63 +34,32 @@
 
 ---
 
-## Getting Started
+## Setup
 
-### Prerequisites
-- Node.js 18+
-- A PostgreSQL database (local or cloud-hosted via Neon, Supabase, etc.)
+Requires Node.js 18+, PostgreSQL, Python 3.8+, Google Gemini API key, Clerk account, and SendGrid/Resend API key.
 
-## Installation
-
-1. Clone the repository
 ```bash
 git clone https://github.com/ArshCypherZ/DrishtiMind.git
 cd DrishtiMind
-````
-
-2.  Install dependencies
-
-<!-- end list -->
-
-```bash
 npm install
-```
-
-3.  Set up environment variables
-
-<!-- end list -->
-
-```bash
-cp .env.example .env.local
-```
-
-Fill in your environment variables in the `.env.local` file. This will include your database URL, Gemini API key, and Clerk keys.
-
-4.  Set up the database
-
-<!-- end list -->
-
-```bash
+cp .env.example .env
+# Fill in .env with your credentials
 npm run db:generate
 npm run db:migrate
 ```
 
-## Usage
+Start voice server:
+```bash
+cd voice
+cp .env.example .env
+# fill in your .env values like DAILY_API_KEY from daily.co
+pip install -r requirements.txt
+python server.py
+```
 
-1.  Start the development server
-
-<!-- end list -->
-
+Start dev server:
 ```bash
 npm run dev
 ```
 
-2.  Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) in your browser
-
------
-
-## Try It Out
-
-  - [Live Demo](https://drishtimind.vercel.app/)
-
-<!-- end list -->
+Visit http://localhost:3000

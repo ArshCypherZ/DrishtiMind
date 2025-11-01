@@ -287,12 +287,13 @@ const NotificationsScreen = () => {
                   )}
 
                   <motion.button
+                    onClick={() => window.location.href = '/email-settings'}
                     className="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all shadow-sm"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     <Settings className="w-5 h-5 text-gray-600" />
-                    <span className="text-gray-700 font-medium">Settings</span>
+                    <span className="text-gray-700 font-medium">Email Settings</span>
                   </motion.button>
                 </motion.div>
 

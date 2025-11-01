@@ -75,7 +75,7 @@ export async function POST(request) {
     Make them:
     - Conversational and easy to read (like advice from a friend, not a textbook).
     - No jargon or long sentences.
-    - Each card should have a clear, catchy title and 3–5 sentences of content.
+    - Each card should have a clear, catchy title and 3-5 sentences of content.
     - Tone: encouraging, natural, and empathetic.
     - Each card should offer a different angle: growth, compassion, action, or insight.
 
@@ -87,7 +87,7 @@ export async function POST(request) {
 
 
     const result = await genAI.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       contents: prompt,
       config: {
         tools: [{

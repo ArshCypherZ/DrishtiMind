@@ -1,0 +1,51 @@
+name: Monthly Summary Generation
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'  # Run on the 1st day of every month at 00:00 UTC
+  workflow_dispatch:
+
+jobs:
+  generate-monthly-summaries:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Generate Monthly Summaries
+        run: |
+          APP_URL="${APP_URL:-https://example.com}"
+          CRON_SECRET="${CRON_SECRET:-your-cron-secret}"
+          
+          echo "Generating monthly summaries for all users..."
+          
+          response=$(curl -s -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            "$APP_URL/api/monthly-summary/generate-batch")
+          
+          echo "Response: $response"
+          
+          if echo "$response" | grep -q '"success":true'; then
+            echo "Monthly summaries generated successfully"
+            
+            # Extract and display stats
+            processed=$(echo "$response" | grep -o '"processed":[0-9]*' | cut -d':' -f2)
+            created=$(echo "$response" | grep -o '"created":[0-9]*' | cut -d':' -f2)
+            errors=$(echo "$response" | grep -o '"errors":[0-9]*' | cut -d':' -f2)
+            monthly_notifications=$(echo "$response" | grep -o '"monthlySummaryNotifications":[0-9]*' | cut -d':' -f2)
+            
+            echo "Monthly Summary Stats:"
+            echo "Users processed: $processed"
+            echo "Monthly summaries created: $created"
+            echo "Monthly summary notifications sent: $monthly_notifications"
+            echo "Errors encountered: $errors"
+            
+            exit 0
+          else
+            echo "Failed to generate monthly summaries"
+            echo "Response: $response"
+            exit 1
+          fi
+        
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}

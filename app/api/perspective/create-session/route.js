@@ -29,9 +29,10 @@ export async function POST(request) {
       }
     });
 
-    // Generate notifications based on milestones
+    // Generate notifications based on perspective milestones
     try {
-      await notificationService.checkMilestones(user.id);
+      await notificationService.checkPerspectiveMilestones(user.id);
+      await notificationService.checkStreakMilestones(user.id);
     } catch (notificationError) {
       console.error('Error generating notifications:', notificationError);
     }

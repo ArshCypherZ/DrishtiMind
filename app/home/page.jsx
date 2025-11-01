@@ -11,7 +11,8 @@ import {
   Heart,
   Brain,
   Users,
-  Sparkles
+  Sparkles,
+  BarChart3
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useAuth } from "../context/AuthContext";
@@ -360,13 +361,46 @@ const HomeScreen = () => {
                 />
               </motion.div>
 
+              {/* View Full Analytics Card */}
+              <motion.div
+                className="bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-2xl p-6 text-white relative overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl transform transition-all duration-300 hover:scale-105 mt-8"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                onClick={() => setCurrentView('dashboard')}
+                whileHover={{ scale: 1.02, y: -5 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                      <BarChart3 className="w-5 h-5 text-white" />
+                    </div>
+                    <h3 className="text-lg font-bold">Full Analytics</h3>
+                  </div>
+                  <p className="text-white/90 text-sm mb-4">
+                    Dive deeper into your wellness journey with comprehensive analytics and personalized insights
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-lg text-xs font-medium">
+                      View Dashboard
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-white/80" />
+                  </div>
+                </div>
+                
+                {/* Decorative elements */}
+                <div className="absolute top-6 right-6 w-20 h-20 bg-white/10 rounded-full blur-2xl"></div>
+                <div className="absolute bottom-6 left-6 w-16 h-16 bg-white/10 rounded-full blur-xl"></div>
+              </motion.div>
+
               {/* Recommendations Sidebar */}
               {homeData?.recommendations && homeData.recommendations.length > 0 && (
                 <motion.div
                   className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm mt-8"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
+                  transition={{ delay: 0.7 }}
                 >
                   <h3 className="text-lg font-semibold mb-4 text-gray-900">Recommended for You</h3>
                   <div className="space-y-4">

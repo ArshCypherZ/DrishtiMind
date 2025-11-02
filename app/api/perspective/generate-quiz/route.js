@@ -142,7 +142,7 @@ export async function POST(request) {
     }`;
 
     const stream = await genAI.models.generateContentStream({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         tools: [{

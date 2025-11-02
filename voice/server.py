@@ -141,11 +141,15 @@ async def rtvi_connect(request: Request) -> Dict[Any, Any]:
         proc = subprocess.Popen(
             ["python3", "-m", bot_file, "-u", room_url, "-t", token],
             env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             bufsize=1,
             cwd=os.path.dirname(os.path.abspath(__file__)),
         )
         bot_procs[proc.pid] = (proc, room_url)
+        print(f"Bot process started with PID: {proc.pid}")
     except Exception as e:
+        print(f"Failed to start bot: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to start subprocess: {e}")
 
     return {"room_url": room_url, "token": token, "session_id": session_id}
@@ -170,7 +174,7 @@ if __name__ == "__main__":
     import uvicorn
 
     default_host = os.getenv("HOST", "0.0.0.0")
-    default_port = int(os.getenv("FAST_API_PORT", "7860"))
+    default_port = int(os.getenv("PORT", "7860"))
 
     parser = argparse.ArgumentParser(description="FastAPI Server")
     parser.add_argument("--host", type=str, default=default_host, help="Host address")

@@ -78,9 +78,7 @@ async def main():
                 audio_in_sample_rate=16000,
                 audio_out_sample_rate=24000,
                 audio_out_enabled=True,
-                camera_out_enabled=True,
-                camera_out_width=1024,
-                camera_out_height=576,
+                camera_out_enabled=False,
                 vad_enabled=True,
                 vad_audio_passthrough=True,
                 vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.5)),
@@ -124,46 +122,14 @@ async def main():
         try:
             llm = GeminiMultimodalLiveLLMService(
                 api_key=os.getenv('GEMINI_API_KEY'),
-                model="models/gemini-2.0-flash",
+                model="models/gemini-2.0-flash-exp",
                 voice_id="Kore",
                 transcribe_user_audio=True,
                 transcribe_model_audio=True,
                 system_instruction=final_system_instruction,
                 tools=tools,
             )
-            
-            # Patch websocket connection with timeout and optimized config
-            async def patched_connect():
-                if llm._websocket:
-                    return
-                import websockets
-                from pipecat.services.gemini_multimodal_live import events
-                uri = f"wss://{llm.base_url}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent?key={llm.api_key}"
-                logger.info(f"Connecting to {uri[:80]}...")
-                llm._websocket = await websockets.connect(uri=uri, open_timeout=30, ping_timeout=30)
-                llm._receive_task = llm.get_event_loop().create_task(llm._receive_task_handler())
-                
-                config = events.Config.model_validate({
-                    "setup": {
-                        "model": llm._model_name,
-                        "generation_config": {
-                            "temperature": 0.8,
-                            "max_output_tokens": 100,
-                            "response_modalities": ["AUDIO"],
-                            "speech_config": {"voice_config": {"prebuilt_voice_config": {"voice_name": llm._voice_id}}},
-                        },
-                    },
-                })
-                if llm._system_instruction:
-                    config.setup.system_instruction = events.SystemInstruction(
-                        parts=[events.ContentPart(text=llm._system_instruction)]
-                    )
-                if llm._tools:
-                    config.setup.tools = llm._tools
-                await llm.send_client_event(config)
-                
-            llm._connect = patched_connect
-            logger.info("Gemini service initialized with extended timeout")
+            logger.info("Gemini service initialized")
         except Exception as e:
             logger.error(f"Failed to initialize Gemini service: {e}")
             raise
@@ -221,8 +187,13 @@ async def main():
 
         @transport.event_handler("on_first_participant_joined")
         async def on_first_participant_joined(transport, participant):
+            logger.info(f"First participant joined: {participant['id']}")
             await transport.capture_participant_transcription(participant["id"])
-            await task.queue_frames([context_aggregator.user().get_context_frame()])
+            logger.info("Triggering bot to speak...")
+            # Send initial context to trigger the bot to speak
+            context_frame = context_aggregator.user().get_context_frame()
+            await task.queue_frames([context_frame])
+            logger.info("Bot should now be speaking")
 
         @transport.event_handler("on_participant_left")
         async def on_participant_left(transport, participant, reason):
@@ -230,8 +201,10 @@ async def main():
             await task.queue_frame(EndFrame())
 
         runner = PipelineRunner()
-
+        
+        logger.info("Starting pipeline runner...")
         await runner.run(task)
+        logger.info("Pipeline runner completed")
 
 
 if __name__ == "__main__":

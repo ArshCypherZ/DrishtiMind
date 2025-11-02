@@ -61,5 +61,7 @@ Start dev server:
 ```bash
 npm run dev
 ```
-
-Visit http://localhost:3000
+---
+View live demo at https://drishti-751482659887.asia-south1.run.app/
+---
+You can even view the screenshots of the web-app [here](screens).

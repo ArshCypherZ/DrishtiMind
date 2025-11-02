@@ -81,7 +81,7 @@ Keep responses: empathetic, supportive, actionable, encouraging, under 150 words
 User's perspective cards:\n${cardsContext}\n\nUser's original situation: "${session.user_input}"`;
 
     const chatSession = genAI.chats.create({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash',
       history: chatHistory,
       config: {
         systemInstruction,
